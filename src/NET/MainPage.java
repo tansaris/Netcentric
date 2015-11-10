@@ -94,7 +94,7 @@ public class MainPage extends JFrame {
 		writeToStream("Stop");
 		top_panel = new JPanel(new GridLayout(2, 2, 2, 0));
 		my_name = new JLabel(ChoosePage.name + ": 0");
-		turn_label = new JLabel(" This is " + ChoosePage.name + "turn");
+		turn_label = new JLabel(" This is " + ChoosePage.name + "'s turn");
 		time_label = new JLabel("Time left : 10 sec");
 		top_panel.add(my_name);
 		top_panel.add(oppo_name);

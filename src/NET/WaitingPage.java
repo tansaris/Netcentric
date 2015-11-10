@@ -24,17 +24,26 @@ public class WaitingPage extends JFrame {
 		frame.add(label);
 		frame.pack();
 		frame.setVisible(true);
-		System.out.print("hwllo");
-		try {
-			serverSocket = new ServerSocket(19998);
-			System.out.print("hello1");
-			server = serverSocket.accept();
-			System.out.print("hello2");
-			MainPage goto_Main = new MainPage("");
-			goto_Main.CreateGameAndShowGUI();
-		} catch (IOException e) {
-			System.out.println(e);
-		}
+		Thread t = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					serverSocket = new ServerSocket(19998);
+					System.out.print("hello1");
+					server = serverSocket.accept();
+					System.out.print("hello2");
+					MainPage goto_Main = new MainPage("");
+					goto_Main.CreateGameAndShowGUI();
+				} catch (IOException e) {
+					System.out.println(e);
+				}
+			}
+		});
+		t.start();
+
+		
 	}
 
 	public static void main(String[] args) {

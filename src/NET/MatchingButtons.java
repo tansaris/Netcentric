@@ -27,14 +27,14 @@ public class MatchingButtons extends JButton implements ActionListener {
 	static Timer countdown = new javax.swing.Timer(1000, new ActionListener() {
 		public void actionPerformed(ActionEvent evt) {
 			if(ten_sec >= 0){
-				MainPage.time_label.setText("Time left:" + (ten_sec/1000));
+				MainPage.time_label.setText("Time left:" + (ten_sec/1000) + " sec");
 				ten_sec -= 1000;
 			}else{
 				// Score
 				//countdown.setRepeats(false);
 				countdown.stop();
 				ten_sec = 10000;
-				MainPage.time_label.setText("Time left:" + (ten_sec/1000));
+				MainPage.time_label.setText("Time left:" + (ten_sec/1000)+" sec");
 				if (MatchingButtons.myTurn) {
 					MainPage.myScore--;
 				} else {
@@ -51,7 +51,7 @@ public class MatchingButtons extends JButton implements ActionListener {
 				Answer ans = new Answer(false, -1, -1, MainPage.myScore, MainPage.clientScore);
 				MainPage.writeToStream(ans);
 				MainPage.my_name.setText(ChoosePage.name + ": " + MainPage.myScore);
-				MainPage.oppo_name.setText(" Bob :" + MainPage.clientScore);
+				MainPage.oppo_name.setText(MainPage.clientName+":" + MainPage.clientScore);
 				MainPage.closeClick();
 				count = 0;
 			}
@@ -116,6 +116,7 @@ public class MatchingButtons extends JButton implements ActionListener {
 
 				if (count == 2 && myTurn) {
 					//countdown.setRepeats(false);
+					MainPage.time_label.setText("Time left: 10 sec");
 					countdown.stop();
 					ten_sec = 10000;
 					storeNum = ae.getActionCommand();
@@ -132,6 +133,7 @@ public class MatchingButtons extends JButton implements ActionListener {
 					timer.start();
 				} else if (count == 2 && !myTurn) {
 					//countdown.setRepeats(false);
+					MainPage.time_label.setText("Time left: 10 sec");
 					countdown.stop();
 					ten_sec = 10000;
 					//System.out.println("Called cpn from actionL22222222");

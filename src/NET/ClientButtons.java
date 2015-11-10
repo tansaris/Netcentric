@@ -74,6 +74,7 @@ public class ClientButtons extends JButton {
 						MainClient.changeTurn();
 					} else if (count == 2 && MainClient.myTurn) {
 						countdown.stop();
+						MainClient.time_label.setText("Time left: 10 sec");
 						ten_sec = 10000;
 						MainClient.writeToStream(pos);
 						count = 0;

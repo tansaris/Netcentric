@@ -135,7 +135,7 @@ public class MainClient extends JFrame {
 		turn_label = new JLabel("This is " + oppoName +" 's turn");
 		while(oppoName ==null);
 		oppo_name = new JLabel(oppoName + ": 0");
-		time_label = new JLabel("Time left : 3 sec");
+		time_label = new JLabel("Time left : 10 sec");
 		top_panel.add(my_name);
 		top_panel.add(oppo_name);
 		top_panel.add(turn_label);
@@ -144,10 +144,8 @@ public class MainClient extends JFrame {
 		
 		// Creating Buttons
 		matching_panel = new JPanel(new GridLayout(6, 6, 4, 4));
-		// String[] filename =
-		// {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"};
 		
-		while(cards==null);//System.out.println("looping");
+		while(cards==null);
 		
 		for (int i = 0; i < 36; i++) {
 			my_buttons[i] = new ClientButtons();
