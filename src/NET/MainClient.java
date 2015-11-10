@@ -22,10 +22,13 @@ import javax.swing.Timer;
 public class MainClient extends JFrame {
 	JPanel top_panel;
 	JPanel matching_panel;
+	static JLabel time_label;
+	static JLabel turn_label;
 	BufferedImage img;
 	String input;
 	Boolean firsttime = true;
-	String playerName;
+	static String playerName;
+	static String oppoName;
 	static ClientButtons my_buttons[] = new ClientButtons[36];
 	static String[] filename = { "1", "2", "3", "4", "5", "6", "7", "8", "9",
 			"10", "11", "12", "13", "14", "15", "16", "17", "18" };
@@ -33,6 +36,9 @@ public class MainClient extends JFrame {
 	int[] card_temp;
 	static ObjectOutputStream out;
 	int count;
+	static boolean myTurn = false;
+	JLabel my_name;
+	JLabel oppo_name;
 	public void CreateGameAndShowGUI(){
 		final Socket server = ConnectPage.client;
 		final ObjectInputStream in;
@@ -44,9 +50,69 @@ public class MainClient extends JFrame {
 			in = new ObjectInputStream(server.getInputStream());
 			while(cards == null){
 				cards = (int[])in.readObject();
-				System.out.println("Create cards");
-				System.out.println(cards);
 			}
+			Thread readThread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					try{
+						//final ObjectInputStream in;
+						//in = new ObjectInputStream(server.getInputStream());
+						while (true) {
+							Object x = in.readObject();
+							input = x.toString();
+							System.out.println("Input: "+input);
+							try{
+								Answer ans = (Answer)x;
+								if(ans.status){
+									my_buttons[ans.num1].setVisible(false);
+									my_buttons[ans.num2].setVisible(false);
+									my_name.setText(playerName+": "+ans.cScore);
+									oppo_name.setText(oppoName+": "+ans.sScore);
+								}else{
+									changeTurn();
+									my_name.setText(playerName+": "+ans.cScore);
+									oppo_name.setText(oppoName+": "+ans.sScore);
+								}
+								closeClick();
+								continue;
+							}catch(Exception e){
+								
+							}
+							if(input.equals("Stop")){
+								try{
+									MainClient.disableButtons();
+								}catch(Exception e){
+									continue;
+								}
+								
+							}else if(input.equals("Start")){
+								MainClient.enableButtons();
+							}
+							else{
+								// to click buttons
+								try{
+									int click = Integer.parseInt(input);
+									System.out.println("Click rcv: "+ click);
+									enableButtons();
+									my_buttons[click].doClick();
+									System.out.println("Clicked");
+								}catch(Exception e){
+									oppoName = input;
+									System.out.println("Update name: "+oppoName);
+								}
+								
+							}
+							
+						}
+					}catch(Exception e){
+						e.printStackTrace();
+						System.out.println("Catchhhhh");
+					}
+
+				}
+			});
+			readThread.start();
 			//input = in.readObject().toString();
 			// to click buttons
 			//int click = Integer.parseInt(input);
@@ -56,43 +122,19 @@ public class MainClient extends JFrame {
 			e.printStackTrace();
 		}
 		
-//		
-//		Thread readThread = new Thread(new Runnable() {
-//			@Override
-//			public void run() {
-//				// TODO Auto-generated method stub
-//				try{
-//					final ObjectInputStream in;
-//					in = new ObjectInputStream(server.getInputStream());
-//					while (true) {
-//						if(cards == null){
-//							cards = (int[])in.readObject();
-//							System.out.println("Create cards");
-//							System.out.println(cards);
-//						}
-//						input = in.readObject().toString();
-//						// to click buttons
-//						int click = Integer.parseInt(input);
-//						my_buttons[click].doClick();
-//					}
-//				}catch(Exception e){
-//					System.out.println("Catchhhhh");
-//				}
-//
-//			}
-//		});
-//		readThread.start();
-		System.out.println("ready to create page");
+		
+		
 		MainPage frame = new MainPage("Card Game");
 		frame.setPreferredSize(new Dimension(800, 800));
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		// INFO
 		top_panel = new JPanel(new GridLayout(2, 2, 2, 0));
-		JLabel my_name = new JLabel(" Alice : 0 ");
-		JLabel turn_label = new JLabel(" This is " + " Bob's " + "turn");
-		JLabel oppo_name = new JLabel(" Bob : 1 ");
-		JLabel time_label = new JLabel("Time left : 3 sec");
+		my_name = new JLabel(ChoosePage.name + ": 0");
+		turn_label = new JLabel("This is " + oppoName +" 's turn");
+		while(oppoName ==null);
+		oppo_name = new JLabel(oppoName + ": 0");
+		time_label = new JLabel("Time left : 3 sec");
 		top_panel.add(my_name);
 		top_panel.add(oppo_name);
 		top_panel.add(turn_label);
@@ -103,47 +145,22 @@ public class MainClient extends JFrame {
 		matching_panel = new JPanel(new GridLayout(6, 6, 4, 4));
 		// String[] filename =
 		// {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18"};
-		System.out.println(cards+"before while");
 		
 		while(cards==null);//System.out.println("looping");
 		
-		System.out.println("assigning cards");
 		for (int i = 0; i < 36; i++) {
-			System.out.println("creating buttons");
 			my_buttons[i] = new ClientButtons();
 			my_buttons[i].setActionCommand(i + "");
 			matching_panel.add(my_buttons[i]);
 		}
-		System.out.println("finished creating buttons");
 		frame.add(matching_panel);
 		frame.pack();
 		frame.setVisible(true);
-		
+		MainClient.disableButtons();
 		try {
-			System.out.println("helloooofrom the other pageeeee");
-			
 			out = new ObjectOutputStream(server.getOutputStream());
-//			Thread writeThread = new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					// TODO Auto-generated method stub
-//					try{
-//						
-//					while (true) {
-//						out.writeObject("Thank you for connecting to "+ server.getLocalSocketAddress() + "\nGoodbye!");
-//					}
-//					}catch(Exception e){
-//						System.out.println("Catchhhhh");
-//					}
-//
-//				}
-//			});
-			
-//			writeThread.start();
-
+			writeToStream(ChoosePage.name);
 		}
-
-		// server.close();
 		catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -151,6 +168,7 @@ public class MainClient extends JFrame {
 	}
 	public static void writeToStream(Object o){
 		try {
+//			System.out.println("Sent: "+ o.toString());
 			out.writeObject(o);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -190,6 +208,15 @@ public class MainClient extends JFrame {
 
 	public static String getPrevious() {
 		return temp;
+	}
+	public static void changeTurn(){
+		if(myTurn){
+			myTurn = false;
+			MainClient.turn_label.setText("This is " + oppoName +" 's turn");
+		}else{
+			myTurn = true;
+			MainClient.turn_label.setText("This is " + playerName +" 's turn");
+		}
 	}
 
 	public static void compareNum() {

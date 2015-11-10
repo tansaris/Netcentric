@@ -14,7 +14,7 @@ import javax.swing.JTextField;
 public class ChoosePage extends JFrame{
 	JPanel top_panel;
 	JPanel main_panel;
-	String name;
+	static String name;
 	public void CreateAndShowGUI(){
 		ChoosePage frame = new ChoosePage("Card Game");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -28,8 +28,9 @@ public class ChoosePage extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				changeToHost();
 				name= in_name.getText();
+				changeToHost();
+				
 			}
 		});
 		JButton join_btn = new JButton("Join a game");
@@ -38,8 +39,8 @@ public class ChoosePage extends JFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				changePage();
 				name= in_name.getText();
+				changePage();
 			}
 			
 		});

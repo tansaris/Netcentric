@@ -1,4 +1,5 @@
 package NET;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -10,23 +11,35 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.Timer;
 
-
-public class ClientButtons extends JButton implements ActionListener {
+public class ClientButtons extends JButton {
 	boolean showed;
 	boolean firsttime = true;
 	BufferedImage img;
 	JButton buttons;
 	Timer timer = null;
-	static int count = 0; 
+	static int count = 0;
 	static int order = 0;
 	static String storeNum;
-	public ClientButtons(){
+	private static int ten_sec = 10000;
+	static Timer countdown = new javax.swing.Timer(1000, new ActionListener() {
+		public void actionPerformed(ActionEvent evt) {
+			if (ten_sec >= 0) {
+				MainClient.time_label.setText("Time left:" + (ten_sec / 1000));
+				ten_sec -= 1000;
+			} else {
+				// Score
+				// countdown.setRepeats(false);
+				countdown.stop();
+				ten_sec = 10000;
+			}
+		}
+	});
+	public ClientButtons() {
 		if (firsttime) {
 			try {
-				System.out.println(MainClient.cards);
 				String imgname = MainClient.filename[MainClient.cards[order]];
-			    img = ImageIO.read(new File("src/" + imgname));
-			    order++;
+				img = ImageIO.read(new File("src/" + imgname));
+				order++;
 			} catch (IOException e1) {
 				System.out.println("hoooooo");
 			}
@@ -43,49 +56,43 @@ public class ClientButtons extends JButton implements ActionListener {
 			timer.start();
 			firsttime = false;
 		}
-	addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ae) {
+		addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ae) {
+				try {
+					System.out.println("My turn: " + MainClient.myTurn);
 					count++;
-					if(count == 1)
-					{
-						MainClient.previous(ae.getActionCommand());
-					}
-					if(count == 2) 
-					{
-						storeNum = ae.getActionCommand();
-						MainClient.compareNum();
-						MainClient.disableButtons();
-					}
-					try {
-						int pos = Integer.parseInt(ae.getActionCommand());
+					System.out.println("Count: " + count);
+					int pos = Integer.parseInt(ae.getActionCommand());
+					if (count == 1 && MainClient.myTurn) {
+						countdown.start();
 						MainClient.writeToStream(pos);
-						String imgname = MainClient.filename[MainClient.cards[pos]];
-					    img = ImageIO.read(new File("src/" + imgname));
-					} catch (IOException e1) {
-						System.out.println("hoooooo");
+						MainClient.myTurn = false;
+						MainClient.changeTurn();
+					} else if (count == 1 && !MainClient.myTurn) {
+						countdown.start();
+						MainClient.myTurn = true;
+						MainClient.changeTurn();
+					} else if (count == 2 && MainClient.myTurn) {
+						countdown.stop();
+						ten_sec = 10000;
+						MainClient.writeToStream(pos);
+						count = 0;
+					} else if (count == 2 && !MainClient.myTurn) {
+						countdown.stop();
+						ten_sec = 10000;
+						count = 0;
 					}
-					setIcon(new ImageIcon(img));
-					if (count == 2) {
-						timer = new Timer(2000, new ActionListener() {
-							public void actionPerformed(ActionEvent evt) {
-								count = 0;
-								MainClient.closeClick();
-								MainClient.enableButtons();
-							}
-						});
-						timer.setRepeats(false);
-						timer.start();
-						
-					}
+					String imgname = MainClient.filename[MainClient.cards[pos]];
+					img = ImageIO.read(new File("src/" + imgname));
+				} catch (IOException e1) {
+					System.out.println("hoooooo");
 				}
+				setIcon(new ImageIcon(img));
 
-			});
-			
-	}	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+			}
+
+		});
 
 	}
+
 }
