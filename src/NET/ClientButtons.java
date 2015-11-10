@@ -33,7 +33,7 @@ public class ClientButtons extends JButton {
 				ten_sec = 10000;
 			}
 		}
-	});
+			});
 	public ClientButtons() {
 		if (firsttime) {
 			try {
@@ -66,11 +66,11 @@ public class ClientButtons extends JButton {
 					if (count == 1 && MainClient.myTurn) {
 						countdown.start();
 						MainClient.writeToStream(pos);
-						MainClient.myTurn = false;
+//						MainClient.myTurn = false;
 						MainClient.changeTurn();
 					} else if (count == 1 && !MainClient.myTurn) {
 						countdown.start();
-						MainClient.myTurn = true;
+//						MainClient.myTurn = true;
 						MainClient.changeTurn();
 					} else if (count == 2 && MainClient.myTurn) {
 						countdown.stop();

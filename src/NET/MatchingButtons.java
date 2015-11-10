@@ -55,7 +55,7 @@ public class MatchingButtons extends JButton implements ActionListener {
 				MainPage.closeClick();
 				count = 0;
 			}
-			
+//			
 		}
 	});
 

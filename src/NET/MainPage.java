@@ -63,7 +63,7 @@ public class MainPage extends JFrame {
 						in = new ObjectInputStream(server.getInputStream());
 						while (true) {
 							input = in.readObject().toString();
-							System.out.println(input);
+							System.out.println("Recieved" +input);
 							if(isNumeric(input)){
 								//System.out.println("rec:" + input);
 								// to click buttons

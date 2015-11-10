@@ -27,7 +27,7 @@ public class MainClient extends JFrame {
 	BufferedImage img;
 	String input;
 	Boolean firsttime = true;
-	static String playerName;
+	String playerName;
 	static String oppoName;
 	static ClientButtons my_buttons[] = new ClientButtons[36];
 	static String[] filename = { "1", "2", "3", "4", "5", "6", "7", "8", "9",
@@ -67,11 +67,12 @@ public class MainClient extends JFrame {
 								if(ans.status){
 									my_buttons[ans.num1].setVisible(false);
 									my_buttons[ans.num2].setVisible(false);
-									my_name.setText(playerName+": "+ans.cScore);
+									my_name.setText(ChoosePage.name +": "+ans.cScore);
+									System.out.println("Correct Name: "+playerName);
 									oppo_name.setText(oppoName+": "+ans.sScore);
 								}else{
 									changeTurn();
-									my_name.setText(playerName+": "+ans.cScore);
+									my_name.setText(ChoosePage.name+": "+ans.cScore);
 									oppo_name.setText(oppoName+": "+ans.sScore);
 								}
 								closeClick();
@@ -210,12 +211,13 @@ public class MainClient extends JFrame {
 		return temp;
 	}
 	public static void changeTurn(){
+		System.out.println("Change turn to "+ !myTurn);
 		if(myTurn){
 			myTurn = false;
 			MainClient.turn_label.setText("This is " + oppoName +" 's turn");
 		}else{
 			myTurn = true;
-			MainClient.turn_label.setText("This is " + playerName +" 's turn");
+			MainClient.turn_label.setText("This is " + ChoosePage.name +" 's turn");
 		}
 	}
 
